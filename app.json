@@ -1,12 +1,18 @@
 {
   "expo": {
-    "name": "Mix5",
-    "slug": "Mix5",
-    "version": "1.0.0",
+    "name": "Wheelz4Wash",
+    "slug": "wheelz4wash",
+    "owner": "kshinde",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,8 +25,11 @@
     "ios": {
       "supportsTablet": true
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "android": {
+      "package": "com.anthena.wheelz4wash",
+      "versionCode": 6,
+      "permissions": []
+    },
+    "description": "Ensuring Quality"
   }
 }
