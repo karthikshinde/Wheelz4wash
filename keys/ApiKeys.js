@@ -9,5 +9,5 @@ let firebaseVariables = {
     messagingSenderId: "1010161121784"
 }
 
-const fire = firebase.initializeApp(firebaseVariables);
-export default fire;
+firebase.initializeApp(firebaseVariables);
+export default firebase;

@@ -14,12 +14,15 @@ import {
     Linking,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import MobileService from "../services/MobileService";
 // import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
 const SignInScreen = ({navigation}) => {
 
+   const { signIn } = React.useContext(AuthContext);
+   
    const dialCall = () => {
         let phoneNumber = "";
         if (Platform.OS === "android") {
@@ -40,7 +43,9 @@ const SignInScreen = ({navigation}) => {
             animation="fadeInUpBig"
             style={styles.footer}
         >
-                <Image style={{ height: 300, width: 300, alignSelf:'center' }} source={require("../assets/images/IT-Support.png")}></Image>
+            <MobileService> </MobileService>
+
+                {/* <Image style={{ height: 300, width: 300, alignSelf:'center' }} source={require("../assets/images/IT-Support.png")}></Image>
                 <Text style={styles.content}>Currently we are accepting offline registrations.</Text>
                 <TouchableOpacity
                     onPress={() => dialCall()}
@@ -61,7 +66,7 @@ const SignInScreen = ({navigation}) => {
                     <Text style={[styles.textSign, {
                         color: '#e74c3c'
                     }]}>Go Back</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
         </Animatable.View>
       </View>
     );

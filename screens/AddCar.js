@@ -116,7 +116,7 @@ export default class AddCar extends Component {
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{ alignSelf: "center", margin:20 }}
             onPress={() => this.props.navigation.navigate("CarDetails")}
           >
@@ -124,7 +124,11 @@ export default class AddCar extends Component {
             style={{ width: 50, height: 50 }}
             source={require("../assets/images/backButton.png")}
           />{" "}Add Car</Text>
-         </TouchableOpacity>
+         </TouchableOpacity> */}
+              <Image
+                style={{ width: 100, height: 100 , alignSelf:"center", marginBottom:10}}
+                source={{ uri: "https://img.icons8.com/ios/256/000000/car-badge.png" }}
+              />
 
           <View style={styles.inputContainer}>
             <Picker
@@ -154,13 +158,6 @@ export default class AddCar extends Component {
           </View>
 
           <View style={styles.inputContainer}>
-            {/* <TextInput
-              autoCapitalize="characters"
-              style={styles.inputs}
-              placeholder="eg: Petrol or Diesel"
-              underlineColorAndroid="transparent"
-              onChangeText={(text) => this.setState({ Fuel: text })}
-            /> */}
             <Picker
               selectedValue={this.state.Fuel}
               style={{ flex: 1, marginLeft: 10 }}

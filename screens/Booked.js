@@ -14,28 +14,53 @@ export default class Booked extends Component {
     this.state = {
       title: "",
       description: "",
+      showNext: true,
+      imageNumber : 0
     }
   }
 
   componentDidMount = async () => {
-    const title = this.props.route.params.title;
-    const description = this.props.route.params.description;
-    if (title != undefined && description != undefined) {
+    let title = undefined;
+    let description = undefined;
+    let showNext = true;
+    let imageNumber = 0;
+    if(this.props && this.props.route && this.props.route.params){
+      title = this.props.route.params.title;
+      description = this.props.route.params.description;
+    } else {
+      title = this.props.title;
+      description = this.props.description;
+      showNext = this.props.showNext; 
+      imageNumber = this.props.imageNumber;   
+    }
+
+   if (title !== undefined && description !== undefined) {
       this.setState({ title });
       this.setState({ description });
+      showNext !== undefined && this.setState({ showNext });
+      imageNumber !== undefined && this.setState({ imageNumber });
     }
+    
+  }
+
+  getImageByNumber = (numb = 0) =>{
+   switch(numb) {
+     case 1: return (<Image style={styles.icon} source={require("../assets/images/success.gif")} />);
+     default: return (<Image style={styles.icon} source={{ uri: "https://img.icons8.com/color/480/000000/ok--v1.png" }} />);
+   }
   }
 
   render() {
     return ( 
       <View style={styles.container}>
-        <Image style={styles.icon} source={{ uri: "https://img.icons8.com/color/480/000000/ok--v1.png" }} />
+        {this.getImageByNumber(this.state.imageNumber)}
         <Text style={styles.title}>{this.state.title}</Text>
         <Text style={styles.description}>{this.state.description}</Text>
         <View style={{ alignSelf: 'center' }}>
+          {this.state.showNext && 
           <TouchableOpacity onPress={() => this.props.navigation.navigate("Home")} style={styles.shareButton}>
             <Text style={styles.shareButtonText}>Continue</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> }
         </View>
       </View>
     )
@@ -50,8 +75,8 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   icon: {
-    width: 100,
-    height: 100,
+    width: 300,
+    height: 300,
   },
   title: {
     fontSize: 24,

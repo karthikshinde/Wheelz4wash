@@ -27,7 +27,7 @@ export default class Notifications extends Component {
           sent: false,
           msg:
             "Welcome to Wheelz4wash, Please feel free to contact us and give us feedback at any given time",
-          image: "https://img.icons8.com/office/16/000000/checked.png",
+          image: "https://img.icons8.com/fluent/250/000000/checked.png",
         },
       ],
     };
@@ -43,7 +43,7 @@ export default class Notifications extends Component {
         id: each,
         sent: false,
         msg: response[each].message,
-        image: "https://img.icons8.com/office/16/000000/checked.png",
+        image: "https://img.icons8.com/fluent/250/000000/checked.png",
       });
     });
     this.setState({ messages });

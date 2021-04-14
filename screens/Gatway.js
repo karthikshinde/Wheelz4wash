@@ -76,7 +76,6 @@ export default class Gatway extends React.Component {
 
   updateSubscriptionDetails = async () => {
     let expiryDate = await this.getExpiryDate();
-    let currentDateandTime = new Date();
     firebase
       .database()
       .ref(
@@ -96,13 +95,18 @@ export default class Gatway extends React.Component {
       });
   };
 
-  getExpiryDate = async()=> {
+   getExpiryDate = async()=> {
+      try{
     let calender = new Date();
     let nextMonthEndDate = new Date(calender.getFullYear(),calender.getMonth()+2,0);
-    let nextMonth = calender.getMonth() === 11 ? 1 : calender.getMonth()+2;
-    let expiry = new Date(calender.getFullYear() + "-" +nextMonth+"-"+calender.getDate());
-    if(expiry > nextMonthEndDate) return nextMonthEndDate;
+    let nextMonth = calender.getMonth() === 11 ? 1 : calender.getMonth()+1;
+    let expiry = new Date(calender.getFullYear(),nextMonth,calender.getDate());
+    if(expiry > nextMonthEndDate) return nextMonthEndDate.toISOString();
     return expiry;
+      } catch(e) {
+        console.log(e);
+      }
+
   }
 
   handleResponse = async (title) => {
@@ -215,7 +219,7 @@ export default class Gatway extends React.Component {
             marginTop:10
           }}
         >
-          Currently we only support paytm gatway{" "}
+          Currently we only support paytm gateway{" "}
         </Text>
         <Image
           style={{ width: 150, height: 50, alignSelf:"center", marginTop:20 }}

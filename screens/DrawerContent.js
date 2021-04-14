@@ -10,7 +10,8 @@ import {
     Text,
     TouchableRipple,
     Switch,
-    IconButton
+    IconButton,
+    Badge
 } from 'react-native-paper';
 import {
     DrawerContentScrollView,
@@ -58,11 +59,12 @@ export function DrawerContent(props) {
                 <View style={styles.drawerContent}>
                     <View style={styles.userInfoSection}>
                         <View style={{flexDirection:'row',marginTop: 15}}>
-                            <Avatar.Image 
+                            <Badge size={50}>{userName.slice(0,2)}</Badge>
+                            {/* <Avatar.Image 
                                 source={require('../assets/logo4.png')}
                                 size={50}
                                 color="white"
-                            />
+                            /> */}
                             
                             <View style={{marginLeft:15, flexDirection:'column'}}>
                                 <Title style={styles.title}>{userName}</Title>    
@@ -182,7 +184,7 @@ export function DrawerContent(props) {
                             </View>
                         </TouchableRipple>
                     </Drawer.Section> */}
-                    <Drawer.Section title="Preferences">
+                    {/* <Drawer.Section title="Preferences">
                         <View style={{ width: "100%", backgroundColor: "black" }}>
                             <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { props.navigation.navigate('TermsConditions') }}>
                                 <IconButton
@@ -193,7 +195,7 @@ export function DrawerContent(props) {
                                 <Title style={styles.sideItem}>Add Car</Title>
                             </TouchableOpacity>
                         </View>
-                    </Drawer.Section>
+                    </Drawer.Section> */}
                 </View>
             </DrawerContentScrollView>
             <Drawer.Section style={styles.bottomDrawerSection}>
@@ -245,6 +247,7 @@ const styles = StyleSheet.create({
     caption: {
       fontSize: 14,
       lineHeight: 14,
+      color:"white"
     },
     row: {
       marginTop: 20,

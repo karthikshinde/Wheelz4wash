@@ -12,23 +12,55 @@ import * as Animatable from 'react-native-animatable';
 // import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
+import Slider from "../components/Slider.js";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const SplashScreen = ({navigation}) => {
     const { colors } = useTheme();
 
     return (
       <View style={styles.container}>
-            <StatusBar backgroundColor='#170051' barStyle="light-content"/>
+            <StatusBar backgroundColor='#e74c3c' barStyle="light-content"/>
         <View style={styles.header}>
-            <Animatable.Image 
+            {/* <Animatable.Image 
                 animation="bounceIn"
                 duraton="1500"
-            source={require('../assets/main.png')}
+            source={require('../assets/images/w4wlogo.png')}
             style={styles.logo}
             resizeMode="stretch"
-            />
+            /> */}
+            <View style={{flex:10}}>
+            <Slider></Slider>
+
+            </View>
+            <View style={{flex:1}}>
+                
+
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('SignInScreen')}
+                            style={[styles.signIn, {
+                                alignSelf:"center"
+                            }]}
+                        >
+                        <LinearGradient
+                            // Button Linear Gradient
+                            colors={['#e74c3c', '#e74c3c', '#FFCC70']}
+                            start={[0,1]}
+                            end={[1,0]}
+                            style={styles.button}
+                            >
+                            <Text style={styles.text}>Get Started</Text>
+
+                        </LinearGradient>
+                            {/* <Text style={[styles.textSign, {
+                                color: 'black'
+                            }]}>Get Started</Text> */}
+                        </TouchableOpacity>
+            
+            </View>
+
         </View>
-        <Animatable.View 
+        {/* <Animatable.View 
             style={[styles.footer, {
                 backgroundColor: "#E74C3C"
             }]}
@@ -37,7 +69,7 @@ const SplashScreen = ({navigation}) => {
             <Text style={[styles.title, {
                 color: "white"
             }]}>Welcome to Wheelz4Wash!!</Text>
-            {/* <Text style={styles.text}>Sign in with account</Text> */}
+            
             <View style={styles.button}>
             
                         <TouchableOpacity
@@ -50,19 +82,20 @@ const SplashScreen = ({navigation}) => {
                         >
                             <Text style={[styles.textSign, {
                                 color: 'black'
-                            }]}>Sign In</Text>
+                            }]}>Get Started</Text>
                         </TouchableOpacity>
             
             </View>
-        </Animatable.View>
+        </Animatable.View> */}
       </View>
     );
 };
 
 export default SplashScreen;
 
-const {height} = Dimensions.get("screen");
-const height_logo = height * 0.28;
+const { height, width} = Dimensions.get("screen");
+const height_logo = height * 0.18;
+const width_logo = width * 0.70;
 
 const styles = StyleSheet.create({
   container: {
@@ -71,8 +104,6 @@ const styles = StyleSheet.create({
   },
   header: {
       flex: 2,
-      justifyContent: 'center',
-      alignItems: 'center'
   },
   footer: {
       flex: 1,
@@ -83,7 +114,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 30
   },
   logo: {
-      width: height_logo,
+      width: width_logo,
       height: height_logo
   },
   title: {
@@ -91,25 +122,27 @@ const styles = StyleSheet.create({
       fontSize: 30,
       fontFamily:"m-bold"
   },
-  text: {
-      color: 'white',
-      marginTop:5
-  },
-  button: {
-    width:"100%",
-  },
   signIn: {
-      width: "100%",
+      width: "80%",
       height: 50,
-      justifyContent: 'center',
-      alignItems: 'center',
       borderRadius: 10,
       flexDirection: 'row',
-      backgroundColor:"white"
   },
   textSign: {
       color: 'white',
       fontFamily:'m-bold'
-  }
+  },
+    button: {
+    width:"100%",
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    backgroundColor: 'transparent',
+    fontSize: 15,
+    color: '#fff',
+    fontFamily:"m-bold"
+  },
 });
 

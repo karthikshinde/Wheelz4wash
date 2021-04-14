@@ -10,7 +10,7 @@ const HomeScreen = ({navigation}) => {
   
     return (
       <View style={styles.container}>
-        <StatusBar barStyle= { theme.dark ? "light-content" : "dark-content" }/>
+        <StatusBar barStyle= { theme.dark ? "dark-content" : "dark-content" }/>
         <Text style={{color: colors.text}}>Home Screen</Text>
       <Button
         title="Go to details screen"

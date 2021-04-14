@@ -11,6 +11,7 @@ import {
   TextInput,
 } from "react-native";
 import * as firebase from "firebase";
+import FireBaseServices from "../services/FireBaseServices";
 
 export default class Profile extends Component {
   constructor(props) {
@@ -23,9 +24,9 @@ export default class Profile extends Component {
   }
 
   componentDidMount = async() => {
-    let response = await this.getUserDetails();
+    let response = await FireBaseServices.getUserDetails();
     const profileDetails = this.setUserDetails(response);
-    this.state.calls.push(
+    let calls =[
       {
         id: 23,
         name: profileDetails[0].Name,
@@ -56,7 +57,7 @@ export default class Profile extends Component {
         status: "Flat No",
         image: "",
       }
-    );
+    ];
 
     this.state.options.push(
       {
@@ -80,13 +81,7 @@ export default class Profile extends Component {
         navigateTo: "PrivacyPolicy",
       }
     );
-  };
-
-  getUserDetails = async () => {
-    const eventref = firebase.database().ref("Users/" + this.state.Owner);
-    const snapshot = await eventref.once("value");
-    const value = snapshot.val();
-    return value;
+    this.setState({calls});
   };
 
   setUserDetails = (userData) => {
@@ -219,7 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   nameTxt: {
-    marginLeft: 15,
+    marginLeft: 12,
     fontFamily:'m-bold',
     color: "black",
     fontSize: 20,
@@ -236,15 +231,13 @@ const styles = StyleSheet.create({
   },
   msgTxt: {
     color: "#e74c3c",
-    fontSize: 18,
-    fontFamily:'m-bold',
+    fontSize: 15,
+    fontFamily:'m-medium',
     marginLeft: 15,
   },
   msgTxt2: {
     color: "#1A6DFF",
     fontSize: 30,
-
-    //marginLeft: 15,
   },
   buttonContainer: {
     height: 45,

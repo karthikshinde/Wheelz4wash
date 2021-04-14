@@ -11,6 +11,7 @@ import {
     Image,
 } from "react-native";
 import * as firebase from "firebase";
+import { RadioButton } from 'react-native-paper';
 
 export default class GlobalAddCar extends Component {
     constructor(props) {
@@ -23,11 +24,16 @@ export default class GlobalAddCar extends Component {
             CarType: "",
             Color: "",
             Fuel: "",
+            carSelected: true,
+            shouldNavigate: true,
             Owner: firebase.auth().currentUser.uid,
         };
     }
 
     componentDidMount = async () => {
+        if(!this.props.shouldNavigate) {
+            this.setState({shouldNavigate : false});
+        }
         let response  = await this.getUserDetails();
         const AppartmentID = response.UserDetails.AppartmentID;
         if (AppartmentID != undefined) {
@@ -46,7 +52,11 @@ export default class GlobalAddCar extends Component {
         if (this.validateDetails()) {
             this.addCarDetails();
             this.addCarToOwner();
-            this.props.navigation.navigate("Booked", {
+            if(!this.state.shouldNavigate) {
+                this.props.reloadRequire(true);
+                return;
+            }
+             this.props.navigation.navigate("Booked", {
                 title: "Car Added !",
                 description: "You car has been successfully added !",
             });
@@ -54,16 +64,15 @@ export default class GlobalAddCar extends Component {
     };
 
     validateDetails = () => {
-        const { CarModel, CarName, CarNo, CarType, Color, Fuel } = this.state;
+        const { CarModel, CarName, CarNo, CarType, Color, Fuel, carSelected } = this.state;
         if (
-            CarModel != "" &&
             CarName != "" &&
             CarNo != "" &&
-            CarType != "" &&
+            CarModel != "" &&
             Color != "" &&
             Fuel != ""
         ) {
-            return true;
+            return carSelected ? CarType != "" : true;
         } else {
             Alert.alert("Alert", "Please fill all the details");
             return false;
@@ -80,7 +89,9 @@ export default class GlobalAddCar extends Component {
             Color,
             Fuel,
             Owner,
+            carSelected
         } = this.state;
+        let type = carSelected ? "car" : "bike";
         firebase
             .database()
             .ref("AllCars/" + CarNo.split(" ").join("").toLowerCase())
@@ -93,6 +104,7 @@ export default class GlobalAddCar extends Component {
                 Color: Color,
                 Fuel: Fuel,
                 Owner: Owner,
+                Vtype: type 
             })
             .then(() => {
                 console.log("Car details have been saved successfully");
@@ -123,6 +135,40 @@ export default class GlobalAddCar extends Component {
         return (
             <KeyboardAvoidingView style={styles.container} behavior="padding">
                 <View>
+                    <View style={{ width: "100%", height: 130 , alignSelf:"center", flexDirection:"row"}} >
+                     <View style={{flex: 1, flexDirection:"column"}}>
+                                  <Image
+                style={{ width: 180, height: 85 , alignSelf:"center"}}
+               source={require("../assets/images/addCar.png")}
+              />
+              <View style={{flexDirection: "row", marginLeft:"10%"}}>
+                    <Text style={{fontFamily:"m-bold", fontSize: 15, marginTop:5}}>Car</Text>
+                    <RadioButton
+                    value="first"
+                    label="Add Car"
+                    status={this.state.carSelected ? 'checked' : 'unchecked'}
+                    onPress={() => this.setState({carSelected : true})}
+                /> 
+              </View>
+  
+                    </View>
+                    <View style={{flex: 1}}>
+                                                          <Image
+                style={{ width: 150, height: 85, alignSelf:"center"}}
+               source={require("../assets/images/addBike.png")}
+              />
+                           <View style={{flexDirection: "row", marginLeft:"10%"}}>
+                    <Text style={{fontFamily:"m-bold", fontSize: 15, marginTop:5}}>Bike</Text>
+                        <RadioButton
+                        value="first"
+                         status={!this.state.carSelected ? 'checked' : 'unchecked'}
+                        onPress={() => this.setState({carSelected : false})}
+                    />  
+                    </View>
+                    </View> 
+                    </View>
+
+                    {this.state.carSelected && 
                     <View style={styles.inputContainer}>
                         <Picker
                             selectedValue={this.state.CarType}
@@ -148,16 +194,9 @@ export default class GlobalAddCar extends Component {
                         >
                             <Text style={styles.inputIcon}>Type</Text>
                         </View>
-                    </View>
+                    </View>}
 
                     <View style={styles.inputContainer}>
-                        {/* <TextInput
-              autoCapitalize="characters"
-              style={styles.inputs}
-              placeholder="eg: Petrol or Diesel"
-              underlineColorAndroid="transparent"
-              onChangeText={(text) => this.setState({ Fuel: text })}
-            /> */}
                         <Picker
                             selectedValue={this.state.Fuel}
                             style={{ flex: 1, marginLeft: 10 }}
@@ -168,6 +207,7 @@ export default class GlobalAddCar extends Component {
                             <Picker.Item key="0" label="Select" value="Select" />
                             <Picker.Item key="1" label="Petrol" value="petrol" />
                             <Picker.Item key="2" label="Diesel" value="diesel" />
+                            <Picker.Item key="2" label="Electric" value="electric" />
                         </Picker>
                         <View
                             style={{

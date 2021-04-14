@@ -25,7 +25,7 @@ import BookmarkScreen from './screens/BookmarkScreen';
 import SplashScreen from "./screens/SplashScreen";
 import Welcome from "./screens/Welcome";
 import Home from "./screens/Home";
-import fire from "./keys/ApiKeys";
+import firebase from "./keys/ApiKeys";
 import Profile from "./screens/Profile";
 import CarDetails from "./screens/CarDetails";
 import Notifications from "./screens/Notifications";
@@ -33,6 +33,9 @@ import AddCar from "./screens/AddCar";
 import Booked from "./screens/Booked";
 import ContactUs from "./screens/ContactUs";
 import SelectCar from "./screens/SelectCar";
+import VehicleDetails from "./screens/VehicleDetails";
+import SpotBooking from "./services/SpotBooking";
+import MapViews from "./screens/MapViews";
 import BuyPack from "./screens/BuyPack";
 import Progress from "./screens/Progress";
 import Book from "./screens/Book";
@@ -41,6 +44,7 @@ import EditProfile from "./screens/EditProfile";
 import TermsConditions from "./screens/TermsConditions";
 import PrivacyPolicy from "./screens/PrivacyPolicy";
 import GlobalAddCar from "./screens/GlobalAddCar.js";
+import MyBookings from "./screens/MyBookings.js";
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 
@@ -49,6 +53,7 @@ import { AuthContext } from './components/context';
 import RootStackScreen from './screens/RootStackScreen';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import FireBaseServices from './services/FireBaseServices';
 
 const HomeStack = createStackNavigator();
 const privacyStack = createStackNavigator();
@@ -56,12 +61,9 @@ const termsStack = createStackNavigator();
 const Drawer = createDrawerNavigator(); 
 
 const App = () => {
-  // const [isLoading, setIsLoading] = React.useState(true);
-  // const [userToken, setUserToken] = React.useState(null); 
 
-  const [isDarkTheme, setIsDarkTheme] = React.useState(false);
+  const [isDarkTheme, setIsDarkTheme] = React.useState(true);
   const [dataLoaded, setDataLoaded] = React.useState(false);
-
 
   const initialLoginState = {
     isLoading: true,
@@ -80,18 +82,19 @@ const App = () => {
     }
   }
 
-  const CustomDarkTheme = {
-    ...NavigationDarkTheme,
-    ...PaperDarkTheme,
-    colors: {
-      ...NavigationDarkTheme.colors,
-      ...PaperDarkTheme.colors,
-      background: '#333333',
-      text: '#ffffff'
-    }
-  }
+  //We are not supporting dark theme as of now, uncomment this to get dark theme.
+  // const CustomDarkTheme = {
+  //   ...NavigationDefaultTheme,
+  //   ...PaperDefaultTheme,
+  //   colors: {
+  //     ...NavigationDefaultTheme.colors,
+  //     ...PaperDefaultTheme.colors,
+  //     background: '#ffffff',
+  //     text: '#333333'
+  //   }
+  // }
 
-  const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
+  const theme = isDarkTheme ? CustomDefaultTheme : CustomDefaultTheme;
 
   const loginReducer = (prevState, action) => {
     switch (action.type) {
@@ -127,13 +130,13 @@ const App = () => {
   const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState);
 
   const authContext = React.useMemo(() => ({
-    signIn: async (foundUser) => {
+    signIn: async (uid) => {
       // setUserToken('fgkj');
       // setIsLoading(false);
-      const userToken = String(foundUser.user.uid);
+      const userToken = String(uid);
       try {
-        
-        await AsyncStorage.setItem('userToken', userToken);
+        FireBaseServices.log("Received UID for SignIn:"+userToken);
+        await FireBaseServices.setAuthToken(AsyncStorage, userToken);
       } catch (e) {
         console.log(e);
       }
@@ -159,22 +162,41 @@ const App = () => {
     }
   }), []);
 
-  const fetchFonts = () => {
+  const fetchFonts = async () => {
     return Font.loadAsync({
       'm-bold': require('./assets/fonts/Montserrat-Bold.ttf'),
-      'm-light': require('./assets/fonts/Montserrat-Light.ttf')
+      'm-light': require('./assets/fonts/Montserrat-Light.ttf'),
+      'm-medium': require('./assets/fonts/Montserrat-Medium.ttf')
     });
   };
+
+
+  // const _loadAssetsAsync = async() =>{
+  //   const imageAssets = cacheImages([
+  //     'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+  //     require('./assets/images/circle.jpg'),
+  //   ]);
+
+  //   const fontAssets = cacheFonts([FontAwesome.font]);
+
+  //   await Promise.all([...imageAssets, ...fontAssets]);
+  // }
+
 
   useEffect(() => {
     setTimeout(async () => {
       let userToken;
       try {
-        fire.auth().onAuthStateChanged(async (user) => {
+        firebase.auth().onAuthStateChanged(async (user) => {
           if (user) {
-            userToken = await AsyncStorage.getItem("userToken");
-            console.log(userToken);
-            dispatch({ type: "LOGIN", token: userToken });
+            console.log(user);
+            let isLive = await FireBaseServices.isUserAvailable();
+            if( isLive ) {
+              userToken = await FireBaseServices.getAuthToken();
+              dispatch({ type: "LOGIN", token: userToken });
+            } else {
+              dispatch({ type: 'LOGOUT' });
+            }
           } else {
             dispatch({ type: 'LOGOUT' });
           }
@@ -214,8 +236,6 @@ const App = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#fff",
-          color: 'black',
-          shadowColor: "black",
           shadowOpacity: 0,
           shadowOffset: {
             height: 0,
@@ -223,7 +243,6 @@ const App = () => {
           shadowRadius: 0,
           elevation: 0,
         },
-        headerTintColor: "black",
         headerTitleStyle: {
           fontFamily: 'm-bold'
         },
@@ -259,8 +278,6 @@ const App = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#fff",
-          color: 'black',
-          shadowColor: "black",
           shadowOpacity: 0,
           shadowOffset: {
             height: 0,
@@ -268,7 +285,6 @@ const App = () => {
           shadowRadius: 0,
           elevation: 0,
         },
-        headerTintColor: "black",
         headerTitleStyle: {
           fontFamily: 'm-bold'
         },
@@ -304,8 +320,6 @@ const App = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: "#fff",
-          color:'black',
-          shadowColor: "black",
           shadowOpacity: 0,
           shadowOffset: {
             height: 0,
@@ -313,7 +327,7 @@ const App = () => {
           shadowRadius: 0,
           elevation: 0,
         },
-        headerTintColor: "black",
+        headerTintColor: "#000000",
         headerTitleStyle: {
           fontFamily:'m-bold'
         },
@@ -339,18 +353,18 @@ const App = () => {
               />
             </TouchableOpacity>
           ),
-          // headerRight: () => (
-          //   <TouchableOpacity
-          //     onPress={() => {
-          //       navigation.openDrawer();
-          //     }}
-          //   >
-          //     <Image
-          //       style={{ width: 30, height: 30, marginRight: 10 }}
-          //       source={require("./assets/images/logout.png")}
-          //     />
-          //   </TouchableOpacity>
-          // ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            >
+              <Image
+                style={{ width: 30, height: 30, marginRight: 10 }}
+                source={require("./assets/images/logout.png")}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
       <HomeStack.Screen name="Profile" component={Profile} />
@@ -358,32 +372,49 @@ const App = () => {
       <HomeStack.Screen
         name="CarDetails"
         component={CarDetails}
-        options={{ headerShown: false }}
+       options={{ title: "Car Details"}}
       />
       <HomeStack.Screen name="Notifications" component={Notifications} />
       <HomeStack.Screen
         name="AddCar"
         component={AddCar}
-        options={{ headerShown: false }}
+        options={{ title: "Add Car"}}
       />
       <HomeStack.Screen name="Booked" component={Booked} />
-      <HomeStack.Screen name="ContactUs" component={ContactUs} />
+      <HomeStack.Screen name="ContactUs" component={ContactUs}  options={{ title: "Contact Us"}} />
       <HomeStack.Screen
         name="SelectCar"
         component={SelectCar}
         options={{ headerShown: false }}
       />
       <HomeStack.Screen
+        name="VehicleDetails"
+        component={VehicleDetails}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="MapViews"
+        component={MapViews}
+        options={{ title: "Location"}}
+      />
+      <HomeStack.Screen
+        name="SpotBooking"
+        component={SpotBooking}
+        options={{ title: "Book here"}}
+      />
+      <HomeStack.Screen
         name="GAddCar"
         component={GlobalAddCar}
         options={{
-          title: "Add Your Car",}}
+          title: "Add Your Vehicle",}}
        // options={{ headerShown: false }}
       />
       <HomeStack.Screen
         name="Progress"
         component={Progress}
-        options={{ headerShown: false }}
+       // options={{ headerShown: false }}
+                options={{
+          title: "Bookings",}}
       />
       <HomeStack.Screen
         name="BuyPack"
@@ -400,6 +431,12 @@ const App = () => {
         component={Gatway}
         options={{ headerShown: false }}
       />
+      <HomeStack.Screen
+        name="MyBookings"
+        component={MyBookings}
+               options={{
+          title: "My bookings"}}
+      />
     </HomeStack.Navigator>
   );
 
@@ -409,7 +446,7 @@ const App = () => {
         <NavigationContainer theme={theme}>
           {loginState && loginState.userToken !== null ? (
             <Drawer.Navigator drawerStyle={{
-              backgroundColor: 'black',
+              backgroundColor: "#000000",
             }}
              drawerContent={props => <DrawerContent {...props} />}>
               {/* <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />

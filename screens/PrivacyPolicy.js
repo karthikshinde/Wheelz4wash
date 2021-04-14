@@ -15,14 +15,16 @@ export default class TermsConditions extends Component {
       terms: [
         {
           id: 1,
-          clause:
-            "This website is operated by CleanseCar Washing and Repair Services Private Limited.. Throughout the site, the terms “we”, “us” and “our” refer to CleanseCar Washing and Repair Services Private Limited..CleanseCar Washing and Repair Services Private Limited offers this website, including all information, tools and services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here. By visiting our site and/ or purchasing something from us, you engage in our “Service” and agree to be bound by the following terms and conditions (“Terms of Service”, “Terms”), including those additional terms and conditions and policies referenced herein and/or available by hyperlink. These Terms of Service apply to all users of the site, including without limitation users who are browsers, vendors, customers, merchants, and/ or contributors of content. Please read these Terms of Service carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service. Any new features or tools which are added to the current store shall also be subject to the Terms of Service. You can review the most current version of the Terms of Service at any time on this page. We reserve the right to update, change or replace any part of these Terms of Service by posting updates and/or changes to our website. It is your responsibility to check this page periodically for changes. Your continued use of or access to the website following the posting of any changes constitutes acceptance of those changes.",
-        },
-        {
-          id: 2,
-          clause:
-            "We reserve the right to refuse service to anyone for any reason at any time. You understand that your content (not including credit card information), may be transferred unencrypted and involve (a) transmissions over various networks; and (b) changes to conform and adapt to technical requirements of connecting networks or devices. Credit card information is always encrypted during transfer over networks. You agree not to reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service or any contact on the website through which the service is provided, without express written permission by us. The headings used in this agreement are included for convenience only and will not limit or otherwise affect these Terms.",
-        },
+          title:"Terms",
+          clause:`Your privacy is important to us. It is Wheelz4wash's policy to respect your privacy regarding any information we may collect from you across our website, http://wheelz4wash.com, and other sites we own and operate.
+We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.
+We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification.
+We don’t share any personally identifying information publicly or with third-parties, except when required to by law.
+Our website may link to external sites that are not operated by us. Please be aware that we have no control over the content and practices of these sites, and cannot accept responsibility or liability for their respective privacy policies.
+You are free to refuse our request for your personal information, with the understanding that we may be unable to provide you with some of your desired services.
+Your continued use of our website will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us.
+This policy is effective as of 18 June 2020`
+        }
       ],
     };
   }
@@ -47,9 +49,12 @@ export default class TermsConditions extends Component {
 
           <View style={styles.postContent}>
             {this.state.terms.map((each) => (
-              <Text style={styles.tags} key={each.id}>
+              <View  key={each.id}>
+              {/* <Text style={styles.tagsH}>{each.title}</Text> */}
+              <Text style={styles.tags}>
                 {each.clause}
               </Text>
+              </View>
             ))}
           </View>
         </View>
@@ -98,6 +103,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontFamily:'m-bold',
     fontSize:15
+  },
+    tagsH: {
+    color: "black",
+    marginTop: 10,
+    fontFamily:'m-bold',
+    fontSize:25
   },
   date: {
     color: "#696969",

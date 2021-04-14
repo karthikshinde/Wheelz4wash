@@ -17,13 +17,6 @@ export default class ContactUs extends Component {
     this.state = {
       calls: [
         {
-          id: 1,
-          name: "Customer Care Number",
-          date: "+91 9494408744",
-          dataType: "num",
-          image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-        },
-        {
           id: 2,
           name: "Customer Care EmailId",
           date: "wheelz4wash@gmail.com",
@@ -36,21 +29,7 @@ export default class ContactUs extends Component {
           date: "+91 9032477277",
           dataType: "num",
           image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-        },
-        {
-          id: 4,
-          name: "Manager",
-          date: "+91 9494408744",
-          dataType: "num",
-          image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-        },
-        {
-          id: 5,
-          name: "Technical problem",
-          date: "+91 7675979097",
-          dataType: "num",
-          image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-        },
+        }
       ],
     };
   }

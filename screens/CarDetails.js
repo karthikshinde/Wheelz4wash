@@ -6,16 +6,19 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ImageBackground,
+  Animated,
+  Easing,
+  Dimensions,
   ActivityIndicator,
+  ImageBackground,
   Alert,
 } from "react-native";
 import * as firebase from "firebase";
-import { ScrollView } from "react-native-gesture-handler";
 
 export default class CarDetails extends Component {
   constructor(props) {
     super(props);
+    this.animatedValue = new Animated.Value(0);
     this.state = {
       modalVisible: false,
       Owner: firebase.auth().currentUser.uid,
@@ -54,6 +57,7 @@ export default class CarDetails extends Component {
   };
 
   componentDidMount = async () => {
+    this.animate();
     const appartmentID = this.props.route.params.AppartmentID;
     const SubsriptionDetails = await this.getSubscribtionDetails();
     const usersPackages = await this.getAllPackageDetails();
@@ -253,42 +257,79 @@ export default class CarDetails extends Component {
       return (
         <Image
           style={styles.bgImage}
-          source={require("../assets/images/sedanCard.png")}
+          //sedanCard
+          source={require("../assets/images/SEDAN.png")}
         />
       );
     } else if (type === "suv") {
       return (
         <Image
           style={styles.bgImage}
-          source={require("../assets/images/suvCard.png")}
+          //suvCard
+          source={require("../assets/images/SUV.png")}
         />
       );
     } else {
       return (
         <Image
           style={styles.bgImage}
-          source={require("../assets/images/hatchbackCard.png")}
+          // hatchbackCard
+          source={require("../assets/images/SUV.png")}
         />
       );
     }
   };
 
+  animate () {
+  this.animatedValue.setValue(0)
+  const createAnimation = function (value, duration, easing, delay = 0) {
+    return Animated.timing(
+      value,
+      {
+        toValue: 1,
+        duration,
+        easing,
+        delay
+      }
+    )
+  }
+  Animated.parallel([
+    createAnimation(this.animatedValue, 1000, Easing.ease, 2000)        
+  ]).start()
+    }
+
   render() {
+    const { height, width} = Dimensions.get("screen");
+    const introButton = this.animatedValue.interpolate({
+     
+    inputRange: [0, 1],
+    outputRange: [-100, ((height / 100)* 65)]
+      });
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: "row" }}>
-          <View style={{ flex: 1, marginTop: 25 }}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("Home")}
-            >
-  
-              <Text style={{ fontFamily: 'm-bold', color: 'black', fontSize: 30, alignSelf: 'flex-start' }}>  <Image
-                style={{ width: 50, height: 50 }}
-                source={require("../assets/images/backButton.png")}
-    />{" "}Car Details</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+    <ImageBackground
+  // resizeMethod={'auto'}
+  style={{
+    width: "100%",
+    height: "100%",
+    backgroundColor:'#e74c3c',
+    borderTopLeftRadius: 300,
+    borderBottomRightRadius: 300,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+
+    elevation: 24,
+  }}
+  imageStyle={{
+    resizeMode: "cover",
+  }}
+>
+
         {this.state.isLoading ? (
           <ActivityIndicator size="large" color="#e74c3c" />
         ) : (
@@ -303,30 +344,13 @@ export default class CarDetails extends Component {
             renderItem={({ item }) => {
               if (item.carNo != "Add") {
                 return (
+                  <View>
                   <View style={styles.card}>
                     {this.getCarImage(item.carType)}
-                    <View
-                      style={[
-                        styles.cardContent,
-                        {
-                          height: 130,
-                          width: 350,
-                          backgroundColor: "#0056ff00",
-                          alignSelf: "center",
-                        },
-                      ]}
-                    ></View>
-                    <View
-                      style={[
-                        styles.cardContent,
-                        {
-                          height: 50,
-                          width: 280,
-                          backgroundColor: "#0056ff00",
-                          alignSelf: "center",
-                        },
-                      ]}
-                    >
+                    <View style={{flex:1}}>
+ 
+                    </View>
+                    <View style={{flex:1}}>
                       <Text style={{ fontFamily: 'm-bold', color: 'black', fontSize: 30, alignSelf: 'center' }}>{item.carType}</Text>
                       <Text
                         style={[
@@ -345,37 +369,33 @@ export default class CarDetails extends Component {
                         {item.carName} / {item.carModel}
                       </Text>
                     </View>
-   
-                    <View
-                      style={{ flex: 1, flexDirection: "row", marginTop: 60 }}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Image
-                          style={styles.image}
-                          source={require("../assets/images/petrol.png")}
-                        />
-                        <Text style={{ color: "black", alignSelf: "center", fontFamily:'m-bold' }}>
+                     <View style={{flex:1}}>
+                       <View style={{flex:1}}></View>
+                       <View style={{flex:1}}></View>
+                       {/* <View style={{flex:1}}></View> */}
+                       <View style={{flex:1, flexDirection:"row"}}>
+                         <View style={{flex : 1, justifyContent:"flex-end", flexDirection:"row",paddingRight:"20%"}}>
+                         <Text style={{ color: "black", fontFamily:'m-bold' }}>
                           {item.fuel}
                         </Text>
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Image
-                          style={styles.image}
-                          source={require("../assets/images/color.png")}
-                        />
-                        <Text style={{ color: "black", alignSelf: "center", fontFamily:'m-bold' }}>
+                         </View>
+                         <View style={{flex : 1, justifyContent:"flex-start", flexDirection:"row"}}>
+                         <Text style={{ color: "black", fontFamily:'m-bold' }}>
                           {item.color}
                         </Text>
-                      </View>
+                         </View>
+                       </View>
+
                     </View>
 
-                    {/* middle Card */}
+
+        {/* <View style={{height: 150}}>
                     <View
                       style={{
-                        width: 300,
-                        height: 200,
+                        width: ((width/100)*80),
+                        height: 80,
                         borderColor: "black",
-                        backgroundColor: "#e74c3c",
+                        backgroundColor: "#f1f3f4",
                         borderRadius: 10,
                         alignSelf: "center",
                         shadowColor: "#000",
@@ -385,28 +405,26 @@ export default class CarDetails extends Component {
                         },
                         shadowOpacity: 0.58,
                         shadowRadius: 16.0,
-
                         elevation: 24,
                       }}
                     >
                       <View
                         style={{
                           flex: 1,
-                          width: 280,
-                          height: 200,
+                          width: ((width/100)*80),
+                          height: 80,
                           alignSelf: "center",
-                          marginTop: 10,
                           justifyContent: "center",
                         }}
                       >
                         {item.newCar ? 
-                        <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/buyPack.png")}></Image>
+                        <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/buyImage.png")}></Image>
                           :
                           item.isPackExpired ? 
-                            <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/renewalPack.png")}></Image>
+                            <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/renewbutton.png")}></Image>
                           :
                             item.remainingCarWashes === 0 ?
-                              <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/doneWashes.png")}></Image>
+                              <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/donebutton.png")}></Image>
                               :
                           <>
                          <Text
@@ -417,7 +435,7 @@ export default class CarDetails extends Component {
                             fontFamily:'m-bold'
                           }}
                         >
-                          Reamining Car Washes
+                          Remaining Interior Washes
                         </Text>
                         <Text
                           style={{
@@ -448,6 +466,7 @@ export default class CarDetails extends Component {
                         flex: 1,
                         justifyContent: "flex-end",
                         alignItems: "center",
+                        marginTop:10
                       }}
                     >
                       {item.isSubscribed && item.isSubForCurrentMonth ? (
@@ -486,11 +505,129 @@ export default class CarDetails extends Component {
                         </TouchableOpacity>
                       )}
                     </View>
-                  </View>
+
+            </View> */}
+          </View>
+                    <View
+                      style={{
+                        width: ((width/100)*80),
+                        height: 80,
+                        borderColor: "black",
+                        backgroundColor: "#f1f3f4",
+                        borderRadius: 10,
+                        alignSelf: "center",
+                        shadowColor: "#000",
+                        shadowOffset: {
+                          width: 0,
+                          height: 12,
+                        },
+                        shadowOpacity: 0.58,
+                        shadowRadius: 16.0,
+                        elevation: 24,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          width: ((width/100)*80),
+                          height: 80,
+                          alignSelf: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {item.newCar ? 
+                        <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/buyImage.png")}></Image>
+                          :
+                          item.isPackExpired ? 
+                            <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/renewbutton.png")}></Image>
+                          :
+                            item.remainingCarWashes === 0 ?
+                              <Image style={{ height: "100%", width: "100%", alignSelf: 'center' }} source={require("../assets/images/donebutton.png")}></Image>
+                              :
+                          <>
+                         <Text
+                          style={{
+                            fontSize: 20,
+                            color: "white",
+                            alignSelf: "center",
+                            fontFamily:'m-bold'
+                          }}
+                        >
+                          Remaining Interior Washes
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 60,
+                            color: "white",
+                            fontFamily:'m-bold',
+                            alignSelf: "center",
+                          }}
+                        >
+                          {item.remainingCarWashes}
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 20,
+                            color: "white",
+                            fontFamily:'m-bold',
+                            alignSelf: "center",
+                          }}
+                        >
+                          Expires on : {item.packExpiryDate}
+                        </Text> 
+                        </>}
+                      </View>
+                    </View>
+
+                    {/* <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        marginTop:10
+                      }}
+                    >
+                      {item.isSubscribed && item.isSubForCurrentMonth ? (
+                        item.remainingCarWashes === 0 ?
+                          <Text style={{color: "black", fontFamily: 'm-bold', marginBottom:50 }}>*Your daily cleaning activity remains active</Text> :
+                        <TouchableOpacity
+                          style={[
+                            styles.buttonContainer,
+                            styles.loginButton,
+                            { marginBottom: 10 },
+                          ]}
+                          onPress={() =>
+                            this.props.navigation.navigate("Progress", {
+                              carID: item.carNo,
+                              carWashesdone: item.completedCarWashes,
+                            })
+                          }
+                        >
+                          <Text style={{ color: "#E74C3C", fontFamily:'m-bold' }}>Book</Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          style={[
+                            styles.buttonContainer,
+                            styles.loginButton,
+                            { marginBottom: 10 },
+                          ]}
+                          onPress={() =>
+                            this.props.navigation.navigate("BuyPack", {
+                              carID: item.carNo,
+                              carWashesdone: item.completedCarWashes,
+                            })
+                          }
+                        >
+                            <Text style={{ color: "#E74C3C", fontFamily: 'm-bold' }}>{item.isPackExpired ? "Renew Pack" : "Browse & Buy"}</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View> */}
+          </View>
                 );
               } else {
                 return (
-                  <View style={styles.card}>
+                  <View style={[styles.card]}>
                     <View
                       style={[
                         styles.cardContent,
@@ -498,6 +635,8 @@ export default class CarDetails extends Component {
                           flex: 1,
                           width: 280,
                           justifyContent: "center",
+                          backgroundColor:"#e74c3c",
+                          borderRadius: 10
                         },
                       ]}
                     >
@@ -521,12 +660,14 @@ export default class CarDetails extends Component {
             }}
           />
         )}
+        </ImageBackground>
       </View>
     );
   }
 }
 
 const resizeMode = "cover";
+const { height, width} = Dimensions.get("screen");
 
 const styles = StyleSheet.create({
   container: {
@@ -571,13 +712,15 @@ const styles = StyleSheet.create({
     elevation: 24,
 
     marginLeft: 20,
-    marginRight: 20,
+    marginRight: 15,
     marginTop: 20,
-    backgroundColor: "#e74c3c",
+    backgroundColor: "#1b1f2300",
     //padding: 10,
     flexDirection: "column",
     borderRadius: 15,
     marginBottom: 20,
+    height: height - ((height / 100)*40),
+    width: width - ((width/100) * 20),
   },
 
   name: {

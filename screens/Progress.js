@@ -22,24 +22,25 @@ export default class Progress extends Component {
     slot:[]
   };
 
-  navigateBookingDetails = async()=>{
+  navigateBookingDetails = async(each)=>{
     let thisYear = new Date().getFullYear();
     this.props.navigation.navigate("Book", {
       appartmentID: this.state.appartmentID,
-      Date: this.state.slot[0].Date,
+      Date: each.Date,
       Year: thisYear,
-      Month: this.state.slot[0].Month,
-      MonthNum: this.state.slot[0].MonthNum,
+      Month: each.Month,
+      MonthNum: each.MonthNum,
       carID: this.state.carID,
       carWashesdone: this.state.carWashesdone,
-      Day: this.state.slot[0].Day,
-      Timings: this.state.slot[0].timings,
-      limit: this.state.slot[0].limit,
+      Day: each.Day,
+      Timings: each.timings,
+      limit: each.limit,
     });
   }
 
   refresh = async () => {
     // get Car ID for booking
+    let data = [];
     let carID = this.props.route.params.carID;
     let carWashesdone = this.props.route.params.carWashesdone
 
@@ -54,24 +55,28 @@ export default class Progress extends Component {
     this.setState({ carWashesdone});
 
     let calender = new Date();
-    let url = `AllCommunities/${appartmentID}/Slots/${calender.getFullYear()}/${calender.getMonth() + 1}`;
+    let url = `AllCommunities/${appartmentID}/Slots/${calender.getFullYear()}/${(calender.getMonth() + 1)}`;
 
     //get all slots of current month
     let slotDetails = await this.getDetails(url);
 
-    //getting latest booking date
-    let bookingDate = Object.keys(slotDetails).reduce((target,next)=>{
-        return Math.max(Number(target),Number(next));
-    });
-    console.log("slot", slotDetails[bookingDate]);
+    console.log(slotDetails);
 
-    let data = [];
-    data.push(
-      slotDetails[bookingDate]
-      );
+    if(slotDetails !== null && slotDetails !== undefined) {
+      //getting all latest bookings
+      let latestSlots =[];
+       Object.keys(slotDetails).forEach((each)=> {
+           if(calender.getDate() < slotDetails[Number(each)].Date){
+             data.push(slotDetails[Number(each)]);
+           }
+      });
+
+      if(latestSlots.length > 0) {
+        this.setState({slotAvailable : true});
+      }
+    }
+
     this.setState({ slot: data});
-
-   // this.setState({ isLoading: false });
   }
 
   componentDidMount = async () => {
@@ -136,10 +141,12 @@ export default class Progress extends Component {
               color="#e74c3c"
             />
           ) : (
+            this.state.slot.length > 0 ?
             this.state.slot.map(each => (
               <View style={styles.eventList} key={each.Date}>
+
                 <TouchableOpacity
-                  onPress={() => this.navigateBookingDetails()}
+                  onPress={() => this.navigateBookingDetails(each)}
                 >
                   <View style={styles.eventBox}>
                     <View style={styles.eventDate}>
@@ -150,6 +157,11 @@ export default class Progress extends Component {
                         {each.Month}
                       </Text>
                     </View>
+                {each.limit === 0 ? <Image
+                style={{ width: "80%", height: 100 , alignSelf:"center", marginBottom:10}}
+                    source={require("../assets/images/fullBooked.png")}
+               // source={{ uri: "https://img.icons8.com/ios/256/000000/car-badge.png" }}
+              /> : 
                     <View style={styles.eventContent}>
                       <Text style={styles.eventTime}>{each.Day}</Text>
                       <Text style={styles.eventTime}>
@@ -168,18 +180,31 @@ export default class Progress extends Component {
 
                       <View style={{ alignSelf: "center" }}>
                         <TouchableOpacity
-                          onPress={() => this.navigateBookingDetails()}
+                          onPress={() => this.navigateBookingDetails(each)}
                           style={styles.shareButton}
                         >
                           <Text style={styles.shareButtonText}>Book</Text>
                         </TouchableOpacity>
                       </View>
-                    </View>
+                    </View> }
                   </View>
                 </TouchableOpacity>
               </View>
             ))
-          )}
+          :            <View style={{justifyContent:"center", alignItems:"center", marginTop:20}}>
+                                    <Image
+                          style={{ width: 100, height: 100 }}
+                          source={{
+                            uri:
+                              "https://img.icons8.com/cotton/64/000000/taxi-booking-office.png",
+                          }}
+                        />
+                      <Text style={styles.eventDay}>
+                       OOPS !
+                      </Text>
+            <Text style={styles.eventTime}>
+                        Sorry ! Currently slots are unavailable.
+                      </Text></View>)}
         </ScrollView>
       </View>
     );

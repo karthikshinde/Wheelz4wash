@@ -15,14 +15,67 @@ export default class TermsConditions extends Component {
       terms: [
         {
           id: 1,
-          clause:
-            "This website is operated by CleanseCar Washing and Repair Services Private Limited.. Throughout the site, the terms “we”, “us” and “our” refer to CleanseCar Washing and Repair Services Private Limited..CleanseCar Washing and Repair Services Private Limited offers this website, including all information, tools and services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here. By visiting our site and/ or purchasing something from us, you engage in our “Service” and agree to be bound by the following terms and conditions (“Terms of Service”, “Terms”), including those additional terms and conditions and policies referenced herein and/or available by hyperlink. These Terms of Service apply to all users of the site, including without limitation users who are browsers, vendors, customers, merchants, and/ or contributors of content. Please read these Terms of Service carefully before accessing or using our website. By accessing or using any part of the site, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions of this agreement, then you may not access the website or use any services. If these Terms of Service are considered an offer, acceptance is expressly limited to these Terms of Service. Any new features or tools which are added to the current store shall also be subject to the Terms of Service. You can review the most current version of the Terms of Service at any time on this page. We reserve the right to update, change or replace any part of these Terms of Service by posting updates and/or changes to our website. It is your responsibility to check this page periodically for changes. Your continued use of or access to the website following the posting of any changes constitutes acceptance of those changes.",
+          title:"Terms",
+          clause:`By accessing the website at http://wheelz4wash.com, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.`
         },
         {
           id: 2,
-          clause:
-            "We reserve the right to refuse service to anyone for any reason at any time. You understand that your content (not including credit card information), may be transferred unencrypted and involve (a) transmissions over various networks; and (b) changes to conform and adapt to technical requirements of connecting networks or devices. Credit card information is always encrypted during transfer over networks. You agree not to reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service or any contact on the website through which the service is provided, without express written permission by us. The headings used in this agreement are included for convenience only and will not limit or otherwise affect these Terms.",
-        },
+          title:"Use License",
+          clause:`Permission is granted to temporarily download one copy of the materials (information or software) on Wheelz4wash's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+
+modify or copy the materials;
+use the materials for any commercial purpose, or for any public display (commercial or non-commercial);
+attempt to decompile or reverse engineer any software contained on Wheelz4wash's website; remove any copyright or other proprietary notations from the materials; or
+transfer the materials to another person or "mirror" the materials on any other server.
+
+This license shall automatically terminate if you violate any of these restrictions and may be terminated by Wheelz4wash at any time. Upon terminating your viewing of these materials or upon the termination of this license, you must destroy any downloaded materials in your possession whether in electronic or printed format.
+`      
+          },
+                  {
+          id: 3,
+          title:"Disclaimer",
+          clause:`The materials on Wheelz4wash's website are provided on an 'as is' basis. Wheelz4wash makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+Further, Wheelz4wash does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its website or otherwise relating to such materials or on any sites linked to this site.
+`      
+          },
+                  {
+          id: 4,
+          title:"Limitations",
+          clause:`In no event shall Wheelz4wash or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Wheelz4wash's website, even if Wheelz4wash or a Wheelz4wash authorized representative has been notified orally or in writing of the possibility of such damage. Because some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you.`      
+          },
+                  {
+          id: 5,
+          title:"Accuracy of materials",
+          clause:`The materials appearing on Wheelz4wash's website could include technical, typographical, or photographic errors. Wheelz4wash does not warrant that any of the materials on its website are accurate, complete or current. Wheelz4wash may make changes to the materials contained on
+
+its website at any time without notice. However Wheelz4wash does not make any commitment to update the materials.
+`      
+          },
+                  {
+          id: 6,
+          title:"Links",
+          clause:`Wheelz4wash has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by Wheelz4wash of the site. Use of any such linked website is at the user's own risk.`      
+          },
+                  {
+          id: 7,
+          title:"Modifications",
+          clause:`Wheelz4wash may revise these terms of service for its website at any time without notice. By using this website you are agreeing to be bound by the then current version of these terms of service.`      
+          },
+                  {
+          id: 8,
+          title:"Governing Law",
+          clause:`These terms and conditions are governed by and construed in accordance with the laws of Telangana and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.`      
+          },
+                  {
+          id: 9,
+          title:"Modification to the prices",
+          clause:`Prices for our products are subject to change without notice. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time. We shall not be liable to you or to any third-party for any modification, price change, suspension or discontinuance of the Service. The billing is scheduled on monthly basis and no refund will be provided to the customer if subscription is cancelled from the user end.`      
+          },
+            {
+          id: 10,
+          title:"*IMPORTANT NOTE",
+          clause:`Please take care of your belongings before giving keys to our executive, as we are not responsible for any loss.`      
+          },
       ],
     };
   }
@@ -43,9 +96,12 @@ export default class TermsConditions extends Component {
           </Text> */}
           <View style={styles.postContent}>
             {this.state.terms.map((each) => (
-              <Text style={styles.tags} key={each.id}>
+               <View  key={each.id}>
+              <Text style={styles.tagsH}>{each.title}</Text>
+              <Text style={styles.tags}>
                 {each.clause}
               </Text>
+              </View>
             ))}
           </View>
         </View>
@@ -91,6 +147,12 @@ const styles = StyleSheet.create({
     color: "black",
     marginTop: 10,
     fontFamily:"m-bold"
+  },
+      tagsH: {
+    color: "black",
+    marginTop: 10,
+    fontFamily:'m-bold',
+    fontSize:25
   },
   date: {
     color: "#696969",

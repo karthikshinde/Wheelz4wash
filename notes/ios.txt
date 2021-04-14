@@ -1,0 +1,14 @@
+
+check links before releasing to IOS
+https://stackoverflow.com/questions/13363673/javascript-date-is-invalid-on-ios
+
+
+//Need Move User from Other apparment to Specified apparment
+-> Create new apparment
+-> Move the User to newly created apparment
+
+//Need all apartmentDetils -> Minimum 50
+->Name
+->Address
+->No of Flats
+->Pincode

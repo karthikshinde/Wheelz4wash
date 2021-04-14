@@ -28,6 +28,7 @@ export default class Book extends Component {
     Timings: "",
     expoPushToken: "",
     notification: {},
+    canBook: false
   };
 
   registerForPushNotificationsAsync = async () => {
@@ -69,7 +70,7 @@ export default class Book extends Component {
     this.setState({ notification: notification });
   };
 
-  componentDidMount() {
+  componentDidMount= async() =>{
     const appartmentID = this.props.route.params.appartmentID;
     const Date = this.props.route.params.Date;
     const Year = this.props.route.params.Year;
@@ -81,28 +82,36 @@ export default class Book extends Component {
     const limit = this.props.route.params.limit;
     const MonthNum = this.props.route.params.MonthNum;
 
-    this.setState({ appartmentID });
-    this.setState({ Date });
-    this.setState({ Year });
-    this.setState({ Month });
-    this.setState({ MonthNum });
-    this.setState({ carID });
-    this.setState({ carWashesdone });
-    this.setState({ Day });
-    this.setState({ Timings });
-    this.setState({ limit });
+    await this.setState({ appartmentID });
+    await this.setState({ Date });
+    await this.setState({ Year });
+    await this.setState({ Month });
+    await this.setState({ MonthNum });
+    await this.setState({ carID });
+    await this.setState({ carWashesdone });
+    await this.setState({ Day });
+    await this.setState({ Timings });
+    await this.setState({ limit });
 
-    // this.registerForPushNotificationsAsync();
+    let url = "AllCommunities/" +this.state.appartmentID +"/FullWash/" +this.state.Year +"/" +this.state.MonthNum + "/" +this.state.Date+"/Customers/"+carID;
+    console.log(url);
+    let result = await this.getDetails(url);
+    console.log(result);
+    if(result === null || result === undefined) {
+      this.setState({canBook : true});
+    }
+
+    this.registerForPushNotificationsAsync();
 
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
     // notification (rather than just tapping the app icon to open it),
     // this function will fire on the next tick after the app starts
     // with the notification data.
-    // this._notificationSubscription = Notifications.addListener(
-    //   this._handleNotification
-    // );
-    // this.sendPushNotification();
+    this._notificationSubscription = Notifications.addListener(
+      this._handleNotification
+    );
+    this.sendPushNotification();
   }
 
   sendPushNotification = async () => {
@@ -127,15 +136,40 @@ export default class Book extends Component {
 
 
   handleBooking = async () => {
-
       await this.updateBookingDetailsInCommunity();
       await this.updateInSubScriptions();
       await this.updatelimitFOrTheDay();
+      await this.updateUserBookings();
       this.props.navigation.navigate("Booked", {
         title: "Booking Successfull",
         description: "We will notify you a day before your booking date",
       });
   };
+
+  updateUserBookings = async()=> {
+    let calender = new Date();
+    let year = calender.getFullYear();
+     firebase
+      .database()
+      .ref(
+        "Users/" +
+          firebase.auth().currentUser.uid +
+          "/MyBookings/"+ calender
+      )
+      .update({
+         Date: this.state.Date,
+         Day:  this.state.Day,
+         Month:  this.state.Month,
+         MonthNum:  this.state.MonthNum,
+         timings: this.state.Timings,
+         Year:year,
+         carID: this.state.carID.toUpperCase()
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   updatelimitFOrTheDay= async () => {
     let newlimit = this.state.limit-1;
@@ -185,6 +219,13 @@ export default class Book extends Component {
       });
   };
 
+    getDetails = async (url) => {
+    const eventref = firebase.database().ref(url);
+    const snapshot = await eventref.once("value");
+    const value = snapshot.val();
+    return value;
+  };
+
   updateInSubScriptions = async () => {
     let count = this.state.carWashesdone + 1;
     firebase
@@ -193,11 +234,7 @@ export default class Book extends Component {
         "Users/" +
           firebase.auth().currentUser.uid +
           "/SubsriptionDetails/" +
-          this.state.carID +
-          "/" +
-          this.state.Year +
-          "/" +
-          this.state.MonthNum
+          this.state.carID
       )
       .update({
         CarWashDone: count,
@@ -212,23 +249,24 @@ export default class Book extends Component {
     return (
       <ScrollView style={{ backgroundColor: "white" }}>
         <View style={styles.container}>
+          {this.state.canBook ? 
           <View style={styles.postContent}>
             <Text style={styles.postTitle}>Interior & Exterior wash</Text>
 
             <Text style={styles.postDescription}>
               Our Wheelz4wash worker will be arriving in the following time gap for the keys. Please
-              kindly make yourseleve available at that time gap.
+              kindly make yourselves available at that time.
             </Text>
             <Text style={styles.name}>Note</Text>
             <Text style={styles.postDescription}>
-              *Cancellation of booking can't be done in app. you need to call customer service for cancellation.
+              *Cancellation of booking can't be done in app. You need to call customer service for cancellation.
             </Text>
             <Text style={styles.postDescription}>
-              *Please take care of your belongings, as we are not responsible for any loss.
+              *Please take care of your belongings before giving keys to our executive, as we are not responsible for any loss.
             </Text>
             <Text style={styles.postDescription}>
               *Please immediately raise an issue by calling customer service, If you feel any immproper service by the worker.
-              this will make us to impore our service. 
+              This will make us to improve our service. 
             </Text>
             <Text style={styles.name}>{this.state.Day}</Text>
             <Text style={styles.name}>
@@ -250,7 +288,25 @@ export default class Book extends Component {
                 <Text style={styles.tags}>Cancel</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> : 
+          <View style={{justifyContent:"center", alignSelf:"center", marginTop:200}}>
+            <Text style={{fontFamily:"m-bold", color: "#e74c3c",fontSize:50, alignSelf:"center"}}>Relax !!</Text>
+             <Text style={{fontFamily:"m-bold", fontSize:20, alignSelf:"center"}}>We have already received your </Text>
+              <Text style={{fontFamily:"m-bold", fontSize:20, alignSelf:"center"}}>booking details for this slot.</Text>
+               <Text style={{fontFamily:"m-bold", fontSize:20, alignSelf:"center"}}>To cancel the booking,</Text>
+                <Text style={{fontFamily:"m-bold", fontSize:20, alignSelf:"center"}}>Please contact customer care.</Text>
+                <Image
+                style={{ width: 300, height: 300 , alignSelf:"center"}}
+                source={{ uri: "https://img.icons8.com/color/256/000000/task-completed.png" }}
+              />
+ 
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate("Progress")}
+                style={{ alignItems: "center", marginTop: 10 }}
+              >
+                <Text style={styles.tags}>Go back</Text>
+              </TouchableOpacity>
+            </View>}
         </View>
       </ScrollView>
     );
@@ -294,6 +350,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontFamily:"m-bold",
     alignSelf:"center",
+    fontSize:20,
     paddingTop:10
   },
   date: {
